@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     url = input.getText().toString();
                     firebase = new Firebase("https://" + url + ".firebaseio.com/");
                     refreshData();
+                    Toast.makeText(MainActivity.this, "DataBase was changed", Toast.LENGTH_SHORT).show();
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         per.setIdPerson(id);
 
         firebase.child("Person").push().setValue(per);
+        Toast.makeText(MainActivity.this, "Data was saved", Toast.LENGTH_SHORT).show();
     }
 
     private void getUpdate(DataSnapshot dataSnapshot){
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         if (persons.size() > 0){
             adapter = new MyAdapter(MainActivity.this,persons);
             rv.setAdapter(adapter);
+            Toast.makeText(MainActivity.this, "Data was Updated", Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(MainActivity.this, "Data no is empty", Toast.LENGTH_SHORT).show();
         }
