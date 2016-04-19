@@ -1,6 +1,9 @@
 package angelcotes.recycleview_firebase;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,21 +24,25 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import angelcotes.recycleview_firebase.Data.Person;
 import angelcotes.recycleview_firebase.Data.Recycler.MyAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String url = "smsmovil";
+    private String url = "smsmovil2";
     EditText nameEditText, descEditText;
     Button saveBtn;
     ArrayList<Person> persons = new ArrayList<>();
     RecyclerView rv;
     MyAdapter adapter;
     Firebase firebase;
+    private Context information;
+    private int index = 0;
 
 
     @Override
@@ -79,11 +88,37 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
-        }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Title");
 
+// Set up the input
+            final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    url = input.getText().toString();
+                    firebase = new Firebase("https://" + url + ".firebaseio.com/");
+                    refreshData();
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+        refreshData();
         return super.onOptionsItemSelected(item);
     }
+
 
     private void displayDialog(){
         Dialog  d = new Dialog(this);
